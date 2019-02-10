@@ -5,6 +5,8 @@ import Block
 import qualified Data.Aeson as A
 import Data.Aeson (FromJSON, ToJSON, toJSON, parseJSON, (.=), (.:), object, withObject, genericToJSON, genericParseJSON)
 import Data.Foldable (asum)
+import Data.Text (Text)
+import Data.Aeson.Types (emptyArray)
 
 data QueryType = State | Heads
 instance ToJSON QueryType where
@@ -26,3 +28,16 @@ instance FromJSON Command where
     [Init <$> o .: "init",
      Submit <$> o .: "block",
      Query <$> o .: "query"]
+
+data Result = Ok | Error Text
+instance ToJSON Result where
+  toJSON Ok = object ["ok" .= emptyArray]
+  toJSON (Error t) = object ["error" .= t]
+
+runCommand :: Command -> Result
+runCommand c =
+  case c of
+    (Init b) -> Ok
+    (Submit b) -> Ok
+    (Query q) -> Error "not implemented"
+

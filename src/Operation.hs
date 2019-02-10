@@ -8,3 +8,6 @@ data Operation = Operation { id :: Int,
     deriving (Show, Eq, Generic)
 instance ToJSON Operation
 instance FromJSON Operation
+
+sumAmounts :: [Operation] -> Int
+sumAmounts = sum . map amount

@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 import Test.QuickCheck
 import Test.QuickCheck.Instances
 import Operation
@@ -7,6 +8,7 @@ import Hash
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy.Char8 as LB
 import Data.Aeson (FromJSON, ToJSON, encode)
+import Test.DocTest
 
 instance Arbitrary Operation where
     arbitrary = do
@@ -32,6 +34,9 @@ instance Arbitrary Block where
         return $ makeBlock pred transactions
 
 main :: IO ()
-main = do
-  t <- generate arbitrary :: IO Block
-  LB.putStrLn (sortedEncode genesis)
+--main = do
+--  t <- generate arbitrary :: IO Block
+--  LB.putStrLn (sortedEncode genesis)
+main = doctest ["-isrc",
+                "src/Transaction.hs",
+                "src/Block.hs"]

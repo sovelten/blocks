@@ -10,7 +10,7 @@ import Data.ByteString.Builder
 import Data.String.Conversions (cs)
 
 newtype Hash = Hash T.Text
-  deriving (Generic, Show)
+  deriving (Generic, Eq, Show)
 instance ToJSON Hash
 instance FromJSON Hash
 

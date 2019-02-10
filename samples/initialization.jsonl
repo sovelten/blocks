@@ -1,0 +1,3 @@
+{"init":{"predecessor":"","transactions":[{"inputs":[],"outputs":[{"amount":30,"id":73}]}],"hash":"0x8c9d4f1b9188e5c1a6bbfa9f1d0316f28da1153b3f68553100dc9c9e45bf6fbe"}}
+{"query":"state"}
+{"query":"heads"}
