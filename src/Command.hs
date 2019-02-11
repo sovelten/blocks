@@ -7,6 +7,9 @@ import Data.Aeson (FromJSON, ToJSON, toJSON, parseJSON, (.=), (.:), object, with
 import Data.Foldable (asum)
 import Data.Text (Text)
 import Data.Aeson.Types (emptyArray)
+import BlockChain (BlockChain(..))
+import qualified BlockChain as BC
+import Control.Monad.State.Lazy
 
 data QueryType = State | Heads
 instance ToJSON QueryType where
@@ -34,10 +37,27 @@ instance ToJSON Result where
   toJSON Ok = object ["ok" .= emptyArray]
   toJSON (Error t) = object ["error" .= t]
 
-runCommand :: Command -> Result
+initState :: Block -> State BlockChain Result
+initState b = do
+  chain <- get
+  case (BC.init b chain) of
+    (Right new) -> do
+      put new
+      return Ok
+    (Left message) -> return $ Error message
+
+submitState :: Block -> State BlockChain Result
+submitState b = do
+  chain <- get
+  case (BC.addBlock chain b) of
+    (Right new) -> do
+      put new
+      return Ok
+    (Left message) -> return $ Error message
+
+runCommand :: Command -> State BlockChain Result
 runCommand c =
   case c of
-    (Init b) -> Ok
-    (Submit b) -> Ok
-    (Query q) -> Error "not implemented"
-
+    (Init b) -> initState b
+    (Submit b) -> submitState b
+    (Query q) -> return $ Error "not implemented"

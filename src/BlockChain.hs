@@ -9,14 +9,16 @@ import Data.Text (Text)
 
 data Head = Head { height :: Int,
                    hash :: Hash}
+  deriving (Eq)
 
 data BlockChain = BlockChain { blocks :: [Block],
                                heads :: [Head] }
+  deriving (Eq)
 
 empty = BlockChain [] []
 
-init :: Block -> BlockChain
-init b = BlockChain [b] [Head 0 (B.hash b)]
+isEmpty :: BlockChain -> Bool
+isEmpty = (== empty)
 
 hasHash :: Hash -> Head -> Bool
 hasHash h ch = (hash ch) == h
@@ -32,9 +34,19 @@ updateHeads hs (Block p _ h) =
   where
     (begin, end) = span (hasHash p) hs
 
+--
+-- Operations
+--
+
+init :: Block -> BlockChain -> Either Text BlockChain
+init b c =
+  if isEmpty c
+  then Right $ BlockChain [b] [Head 0 (B.hash b)]
+  else Left "already initialized"
+
 addBlock :: BlockChain -> Block -> Either Text BlockChain
 addBlock (BlockChain bs hs) b = do
-  (validHash b)
-  (validTransactions b)
+  validHash b
+  validTransactions b
   newHeads <- updateHeads hs b
   return $ BlockChain (b:bs) newHeads

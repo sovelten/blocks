@@ -30,6 +30,7 @@ dependencies:
 - string-conversions
 - safe
 - either
+- mtl
 
 library:
   source-dirs: src
