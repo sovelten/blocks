@@ -25,6 +25,15 @@ sortedEncode = P.encodePretty' (P.Config (P.Spaces 0) P.compare P.Generic False)
 blockHash :: Hash -> [Transaction] -> Hash
 blockHash p t = hexEncode $ C.hashlazy $ sortedEncode (p, t)
 
+-- | Creates a valid block from predecessor hash and list of transactions
+--
+-- Examples:
+--
+-- >>> :set -XOverloadedStrings
+-- >>> makeBlock (Hash "") []
+-- Block {predecessor = Hash "", transactions = [], hash = Hash "0xaa5598c670c7f9c9ab8594d942390dad96b52631bfb78d060476b9a719365947"}
+-- >>> makeBlock (Hash "0x8c9d4f1b9188e5c1a6bbfa9f1d0316f28da1153b3f68553100dc9c9e45bf6fbe") []
+-- Block {predecessor = Hash "0x8c9d4f1b9188e5c1a6bbfa9f1d0316f28da1153b3f68553100dc9c9e45bf6fbe", transactions = [], hash = Hash "0x2ac26c862ac72dec16a8f47dda47634e450f7306dcdd9931fd3211060506c1c8"}
 makeBlock :: Hash -> [Transaction] -> Block
 makeBlock p t = Block p t (blockHash p t)
 

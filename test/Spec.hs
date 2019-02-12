@@ -34,9 +34,7 @@ instance Arbitrary Block where
         return $ makeBlock pred transactions
 
 main :: IO ()
---main = do
---  t <- generate arbitrary :: IO Block
---  LB.putStrLn (sortedEncode genesis)
 main = doctest ["-isrc",
                 "src/Transaction.hs",
-                "src/Block.hs"]
+                "src/Block.hs",
+                "src/BlockChain.hs"]
