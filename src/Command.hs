@@ -8,7 +8,9 @@ import Data.Foldable (asum)
 import Data.Text (Text)
 import Data.Aeson.Types (emptyArray)
 import BlockChain (BlockChain(..))
+import BlockTree (BlockTree(..))
 import qualified BlockChain as BC
+import qualified BlockTree as BT
 import Control.Monad.State.Lazy
 
 data QueryType = State | Heads
@@ -37,25 +39,25 @@ instance ToJSON Result where
   toJSON Ok = object ["ok" .= emptyArray]
   toJSON (Error t) = object ["error" .= t]
 
-initState :: Block -> State BlockChain Result
+initState :: Block -> State BlockTree Result
 initState b = do
-  chain <- get
-  case (BC.init b chain) of
+  t <- get
+  case (BT.init b t) of
     (Right new) -> do
       put new
       return Ok
     (Left message) -> return $ Error message
 
-submitState :: Block -> State BlockChain Result
+submitState :: Block -> State BlockTree Result
 submitState b = do
-  chain <- get
-  case (BC.addBlock chain b) of
+  t <- get
+  case (BT.addBlock t b) of
     (Right new) -> do
       put new
       return Ok
     (Left message) -> return $ Error message
 
-runCommand :: Command -> State BlockChain Result
+runCommand :: Command -> State BlockTree Result
 runCommand c =
   case c of
     (Init b) -> initState b

@@ -31,6 +31,7 @@ dependencies:
 - safe
 - either
 - mtl
+- containers
 
 library:
   source-dirs: src

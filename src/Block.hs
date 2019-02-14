@@ -81,3 +81,7 @@ validHash b@(Block p ts h) =
     False -> Left "invalid hash"
   where
     isValid = h == (blockHash p ts)
+
+-- | True if first is parent of second
+isParent :: Block -> Block -> Bool
+isParent (Block _ _ h) (Block p _ _) = p == h
