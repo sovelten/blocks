@@ -56,10 +56,11 @@ heads :: BlockTree -> [Head]
 heads = concat . zipWith (\n bs -> map (makeHead n) bs) [1..] . heights
 
 tryAddBlock :: Block -> BlockTree -> Either Text BlockTree
-tryAddBlock b t = if added then Right newTree else Right t
+tryAddBlock b t = if added
+  then Right newTree
+  else Left "no predecessor found"
   where
     (added, newTree) = addNode b t
-
 
 addBlock :: BlockTree -> Block -> Either Text BlockTree
 addBlock t b = do

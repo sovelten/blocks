@@ -1,0 +1,7 @@
+{"init":{"predecessor":"","transactions":[{"inputs":[],"outputs":[{"amount":30,"id":73}]}],"hash":"0x8c9d4f1b9188e5c1a6bbfa9f1d0316f28da1153b3f68553100dc9c9e45bf6fbe"}}
+{"block":{"predecessor":"0x8c9d4f1b9188e5c1a6bbfa9f1d0316f28da1153b3f68553100dc9c9e45bf6fbe","transactions":[],"hash":"0x2ac26c862ac72dec16a8f47dda47634e450f7306dcdd9931fd3211060506c1c8"}}
+{"block":{"predecessor":"0x8c9d4f1b9188e5c1a6bbfa9f1d0316f28da1153b3f68553100dc9c9e45bf6fbe","transactions":[{"inputs":[{"amount":30,"id":73}],"outputs":[{"amount":30,"id":74}]}],"hash":"0x48427e95d172910e900ff36e237cf706122203dffef312ed91bc5b3ac9c0ab72"}}
+{"query":"heads"}
+{"block":{"predecessor":"0x48427e95d172910e900ff36e237cf706122203dffef312ed91bc5b3ac9c0ab72","transactions":[{"inputs":[{"amount":30,"id":74}],"outputs":[{"amount":15,"id":75},{"amount":15,"id":76}]}],"hash":"0xdefe8d627f33bb3b8ba1a6191a088e6eb5e836b5a9b1e08fe3dc38d9e124b5d9"}}
+{"query":"state"}
+{"query":"heads"}

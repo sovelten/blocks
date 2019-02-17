@@ -2,15 +2,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Command where
 import Block
+import qualified BlockChain as BC
 import qualified Data.Aeson as A
 import Data.Aeson (FromJSON, ToJSON, toJSON, parseJSON, (.=), (.:), object, withObject, genericToJSON, genericParseJSON)
 import Data.Foldable (asum)
 import Data.Text (Text)
 import Data.Aeson.Types (emptyArray)
-import BlockChain (BlockChain(..))
-import BlockTree (BlockTree(..))
-import qualified BlockChain as BC
-import qualified BlockTree as BT
+import BlockGraph (BlockGraph(..))
+import qualified BlockGraph as BG
 import Control.Monad.State.Lazy
 
 data QueryType = State | Heads
@@ -34,32 +33,41 @@ instance FromJSON Command where
      Submit <$> o .: "block",
      Query <$> o .: "query"]
 
-data Result = Ok | Error Text
+data Result = Ok | Error Text | RHeads [BG.Node] | RState BC.State
 instance ToJSON Result where
   toJSON Ok = object ["ok" .= emptyArray]
+  toJSON (RHeads hs) = object ["heads" .= hs]
+  toJSON (RState s) = object ["state" .= s]
   toJSON (Error t) = object ["error" .= t]
 
-initState :: Block -> State BlockTree Result
+initState :: Block -> State BlockGraph Result
 initState b = do
-  t <- get
-  case (BT.init b t) of
+  g <- get
+  case (BG.init b g) of
     (Right new) -> do
       put new
       return Ok
     (Left message) -> return $ Error message
 
-submitState :: Block -> State BlockTree Result
+submitState :: Block -> State BlockGraph Result
 submitState b = do
-  t <- get
-  case (BT.addBlock t b) of
+  g <- get
+  case (BG.addNode b g) of
     (Right new) -> do
       put new
       return Ok
     (Left message) -> return $ Error message
 
-runCommand :: Command -> State BlockTree Result
+queryState :: QueryType -> State BlockGraph Result
+queryState q = do
+  g <- get
+  case q of
+    Heads -> return $ RHeads $ BG.heads g
+    State -> return $ RState $ BG.state g
+
+runCommand :: Command -> State BlockGraph Result
 runCommand c =
   case c of
     (Init b) -> initState b
     (Submit b) -> submitState b
-    (Query q) -> return $ Error "not implemented"
+    (Query q) -> queryState q

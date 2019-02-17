@@ -32,6 +32,8 @@ dependencies:
 - either
 - mtl
 - containers
+- unordered-containers
+- hashable
 
 library:
   source-dirs: src
