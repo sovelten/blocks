@@ -1,16 +1,16 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 module Command where
-import Block
-import qualified BlockChain as BC
 import qualified Data.Aeson as A
 import Data.Aeson (FromJSON, ToJSON, toJSON, parseJSON, (.=), (.:), object, withObject, genericToJSON, genericParseJSON)
 import Data.Foldable (asum)
 import Data.Text (Text)
 import Data.Aeson.Types (emptyArray)
-import BlockGraph (BlockGraph(..))
-import qualified BlockGraph as BG
 import Control.Monad.State.Lazy
+import Models.BlockGraph (BlockGraph(..))
+import qualified Models.BlockChain as BC
+import qualified Models.BlockGraph as BG
+import Models.Block
 
 data QueryType = State | Heads
 instance ToJSON QueryType where

@@ -1,15 +1,15 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Block where
-import Hash (Hash(..), hexEncode)
-import Operation (Operation(..))
-import Transaction
-import qualified Transaction as T
+module Models.Block (Block(..), makeBlock, valid) where
+import qualified Crypto.Hash.SHA256 as C
 import Data.Aeson (FromJSON, ToJSON, encode)
+import qualified Data.ByteString.Lazy.Char8 as LB
 import qualified Data.Aeson.Encode.Pretty as P
 import GHC.Generics (Generic)
-import qualified Crypto.Hash.SHA256 as C
-import qualified Data.ByteString.Lazy.Char8 as LB
+import Models.Hash (Hash(..), hexEncode)
+import Models.Operation (Operation(..))
+import Models.Transaction (Transaction(..))
+import qualified Models.Transaction as T
 import Data.Text (Text)
 
 data Block = Block { predecessor :: Hash,
@@ -36,11 +36,6 @@ blockHash p t = hexEncode $ C.hashlazy $ sortedEncode (p, t)
 -- Block {predecessor = Hash "0x8c9d4f1b9188e5c1a6bbfa9f1d0316f28da1153b3f68553100dc9c9e45bf6fbe", transactions = [], hash = Hash "0x2ac26c862ac72dec16a8f47dda47634e450f7306dcdd9931fd3211060506c1c8"}
 makeBlock :: Hash -> [Transaction] -> Block
 makeBlock p t = Block p t (blockHash p t)
-
-genesis :: Block
-genesis = Block (Hash "") transactions hash
-  where transactions = [Transaction [] [(Operation 73 30)]]
-        hash = blockHash (Hash "") transactions
 
 -- | Checks if all transactions in a block are valid
 --
@@ -82,6 +77,6 @@ validHash b@(Block p ts h) =
   where
     isValid = h == (blockHash p ts)
 
--- | True if first is parent of second
-isParent :: Block -> Block -> Bool
-isParent (Block _ _ h) (Block p _ _) = p == h
+valid b = do
+  validHash b
+  validTransactions b

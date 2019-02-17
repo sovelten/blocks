@@ -1,14 +1,15 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
-module BlockGraph where
-import Block
-import qualified BlockChain as BC
+module Models.BlockGraph where
 import Data.Aeson (ToJSON, toJSON, object, (.=))
 import Data.HashMap.Strict (HashMap)
 import Data.Text (Text)
 import qualified Data.HashMap.Strict as HM
 import GHC.Generics (Generic)
-import Hash
+import Models.Block (Block(..))
+import qualified Models.Block as B
+import qualified Models.BlockChain as BC
+import Models.Hash
 import Safe (headMay)
 
 data Node = Node { height :: Int,
@@ -75,8 +76,7 @@ updateMap n@(Node _ (Block _ _ h)) m = HM.insert h n m
 -- | Add node to graph if hash not duplicated and if it has a parent
 addNode :: Block -> BlockGraph -> Either Text BlockGraph
 addNode b g@(BlockGraph m hs) = do
-  validHash b
-  validTransactions b
+  B.valid b
   notDuplicated b g
   parent@(Node l _) <- parentNode b g
   let node = (Node (l+1) b)

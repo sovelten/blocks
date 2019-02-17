@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveGeneric #-}
-module Hash where
+module Models.Hash (Hash(..), hexEncode) where
 import Data.Aeson (FromJSON, ToJSON, encode)
 import GHC.Generics
 import qualified Data.Text as T

@@ -1,10 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
 import Test.QuickCheck
 import Test.QuickCheck.Instances
-import Operation
-import Transaction
-import Block
-import Hash
+import Models.Operation
+import Models.Transaction
+import Models.Block
+import Models.Hash
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy.Char8 as LB
 import Data.Aeson (FromJSON, ToJSON, encode)
@@ -35,6 +35,6 @@ instance Arbitrary Block where
 
 main :: IO ()
 main = doctest ["-isrc",
-                "src/Transaction.hs",
-                "src/Block.hs",
-                "src/BlockChain.hs"]
+                "src/Models/Transaction.hs",
+                "src/Models/Block.hs",
+                "src/Models/BlockChain.hs"]

@@ -1,9 +1,9 @@
 {-# LANGUAGE DeriveGeneric #-}
-module Transaction where
+module Models.Transaction (valid, transact, Transaction (..)) where
 import Data.Aeson (FromJSON, ToJSON)
 import Data.List ((\\))
 import GHC.Generics (Generic)
-import Operation (Operation(..), sumAmounts)
+import Models.Operation (Operation(..), sumAmounts)
 
 data Transaction = Transaction { inputs :: [Operation],
                                  outputs :: [Operation]}

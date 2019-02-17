@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
-module Operation where
+module Models.Operation (sumAmounts, Operation (..)) where
 import Data.Aeson (FromJSON, ToJSON)
 import GHC.Generics (Generic)
 

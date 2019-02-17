@@ -1,14 +1,14 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
-module BlockChain where
-import Block
+module Models.BlockChain (State(..), calculateState) where
 import Data.Aeson (ToJSON, toJSON, object, (.=))
 import Data.Foldable (foldl')
 import Data.Text (Text)
 import GHC.Generics (Generic)
-import Transaction
-import Operation
-import Hash
+import Models.Block
+import Models.Hash
+import Models.Operation
+import Models.Transaction
 
 data State = State { height :: Int,
                      hash :: Hash,
