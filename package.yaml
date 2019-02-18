@@ -29,9 +29,7 @@ dependencies:
 - text
 - string-conversions
 - safe
-- either
 - mtl
-- containers
 - unordered-containers
 - hashable
 
