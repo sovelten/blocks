@@ -1,13 +1,38 @@
 # blocks
 
-A very simple blockchain client
+A very simple blockchain client implemented in Haskell
 
 ## Installation
+
+The code is built using Haskell Tool Stack
 
 ```
 $ stack setup
 $ stack build
 $ stack install
+```
+
+## Runnning
+
+```
+$ stack exec blocks-exe
+```
+
+## Runnning tests
+
+Some unit tests are written as documentation using haskell-doctest.
+They can be run with:
+
+```
+$ stack test
+```
+
+## Documentation
+
+The documentation on the code can be rendered into a html document using:
+
+```
+$ stack haddock
 ```
 
 ## Code Organization
@@ -40,7 +65,8 @@ This part of the code contains code to calculate the state of a blockchain.
 The blockgraph is a data structure maintaining all blocks that are added.
 The data structure consists of a hash map where the key is the hash of the block and the value is a node containing the block itself and its height in the tree.
 
-The height information is added to avoid computing it everytime it is needed. Since once a block is added it is never removed or changed, its height in the chain is always the same.
+The height information is added to avoid computing it everytime it is needed.
+Since once a block is added it is never removed or changed, its height in the chain is always the same.
 
 Also, a list of heads is maintained and updated accordingly when a block is added.
 The heads represent endpoints of a chain.
