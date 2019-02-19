@@ -59,7 +59,7 @@ There was no mention that the code should check that the transactions in a block
 
 A block containing a list of transactions, the predecessor hash and its own hash 
 
-#### BlockState
+#### ChainState
 
 State is the data structure responsible for storing a chain or sub-chain state, containing height, block hash and unspent outputs.
 
