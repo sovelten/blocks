@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Models.Block (Block(..), makeBlock, valid) where
+module Models.Block (Block(..), makeBlock, valid, outputs) where
 import qualified Crypto.Hash.SHA256 as C
 import Data.Aeson (FromJSON, ToJSON, encode)
 import qualified Data.ByteString.Lazy.Char8 as LB
@@ -8,7 +8,7 @@ import qualified Data.Aeson.Encode.Pretty as P
 import GHC.Generics (Generic)
 import Models.Hash (Hash(..), hexEncode)
 import Models.Operation (Operation(..))
-import Models.Transaction (Transaction(..))
+import Models.Transaction (Transaction(Transaction))
 import qualified Models.Transaction as T
 import Data.Text (Text)
 
@@ -80,3 +80,6 @@ validHash b@(Block p ts h) =
 valid b = do
   validHash b
   validTransactions b
+
+outputs :: Block -> [Operation]
+outputs = concat . map T.outputs . transactions

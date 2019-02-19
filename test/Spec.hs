@@ -37,4 +37,4 @@ main :: IO ()
 main = doctest ["-isrc",
                 "src/Models/Transaction.hs",
                 "src/Models/Block.hs",
-                "src/Models/BlockChain.hs"]
+                "src/Models/ChainState.hs"]

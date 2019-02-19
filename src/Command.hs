@@ -8,7 +8,7 @@ import Data.Text (Text)
 import Data.Aeson.Types (emptyArray)
 import Control.Monad.State.Lazy
 import Models.BlockGraph (BlockGraph(..))
-import qualified Models.BlockChain as BC
+import qualified Models.ChainState as S
 import qualified Models.BlockGraph as BG
 import Models.Block
 
@@ -33,7 +33,7 @@ instance FromJSON Command where
      Submit <$> o .: "block",
      Query <$> o .: "query"]
 
-data Result = Ok | Error Text | RHeads [BG.Node] | RState BC.State
+data Result = Ok | Error Text | RHeads [BG.Node] | RState S.State
 instance ToJSON Result where
   toJSON Ok = object ["ok" .= emptyArray]
   toJSON (RHeads hs) = object ["heads" .= hs]
@@ -63,7 +63,7 @@ queryState q = do
   g <- get
   case q of
     Heads -> return $ RHeads $ BG.heads g
-    State -> return $ RState $ BG.state g
+    State -> return $ RState $ BG.longestChainState g
 
 runCommand :: Command -> State BlockGraph Result
 runCommand c =

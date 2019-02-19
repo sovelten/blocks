@@ -1,7 +1,9 @@
 {-# LANGUAGE DeriveGeneric #-}
-module Models.Transaction (valid, transact, Transaction (..)) where
+{-# LANGUAGE OverloadedStrings #-}
+module Models.Transaction (valid, safeTransact, Transaction (..)) where
 import Data.Aeson (FromJSON, ToJSON)
-import Data.List ((\\))
+import Data.List ((\\), intersect)
+import Data.Text
 import GHC.Generics (Generic)
 import Models.Operation (Operation(..), sumAmounts)
 
@@ -34,3 +36,10 @@ valid t = amountInputs == amountOutputs
 -- [Operation {id = 2, amount = 10},Operation {id = 3, amount = 10}]
 transact :: [Operation] -> Transaction -> [Operation]
 transact unspent (Transaction ins outs) = (unspent \\ ins) ++ outs
+
+-- | Same as transact, but checks if inputs are actually available before consuming
+safeTransact :: [Operation] -> Transaction -> Either Text [Operation]
+safeTransact unspent t@(Transaction ins _) =
+  if intersect unspent ins == ins
+  then Right $ transact unspent t
+  else Left "invalid transaction inputs"

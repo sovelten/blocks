@@ -8,19 +8,19 @@ import qualified Data.HashMap.Strict as HM
 import GHC.Generics (Generic)
 import Models.Block (Block(..))
 import qualified Models.Block as B
-import qualified Models.BlockChain as BC
+import qualified Models.ChainState as S
 import Models.Hash
 import Safe (headMay)
 
-data Node = Node { height :: Int,
+data Node = Node { state :: S.State,
                    block :: Block}
   deriving (Eq, Generic, Show)
 
 instance ToJSON Node where
-  toJSON (Node l (Block _ _ h)) = object ["height" .= l, "hash" .= h]
+  toJSON (Node (S.State l _ _) (Block _ _ h)) = object ["height" .= l, "hash" .= h]
 
 instance Ord Node where
-  compare (Node l1 b1) (Node l2 b2) =
+  compare (Node (S.State l1 _ _) b1) (Node (S.State l2 _ _) b2) =
     case compare l1 l2 of
       LT -> LT
       GT -> GT
@@ -36,23 +36,16 @@ parentNode (Block p _ _) (BlockGraph m _) =
        (Just node) -> Right node
        Nothing -> Left "no predecessor found"
 
--- | Find chain of blocks by following head till genesis block
--- | Note that chain order is from genesis to last block
-chain :: Block -> BlockGraph -> [Block]
-chain b g =
-  case parentNode b g of
-    Right (Node _ p) -> (chain p g) ++ [b]
-    Left _ -> [b]
-
 empty :: BlockGraph
 empty = BlockGraph HM.empty []
 
+-- | Creates initial block
 init :: Block -> BlockGraph -> Either Text BlockGraph
 init b@(Block _ _ h) (BlockGraph m hs) =
   if m == HM.empty
-     then Right $ BlockGraph (HM.insert h node m) [node]
+     then Right $ BlockGraph (updateMap node m) [node]
      else Left "already initialized"
-  where node = Node 1 b
+  where node = Node (S.State 1 h (B.outputs b)) b
 
 notDuplicated :: Block -> BlockGraph -> Either Text BlockGraph
 notDuplicated (Block _ _ h) g@(BlockGraph m _) =
@@ -73,20 +66,24 @@ updateHeads new parent hs =
 -- | Include node in the hash map
 updateMap n@(Node _ (Block _ _ h)) m = HM.insert h n m
 
--- | Add node to graph if hash not duplicated and if it has a parent
+-- | Add node to graph
+-- | For a node to be added, it needs to be valid, not duplicated
+-- | And the transaction inputs must match unspent outputs
 addNode :: Block -> BlockGraph -> Either Text BlockGraph
 addNode b g@(BlockGraph m hs) = do
   B.valid b
   notDuplicated b g
-  parent@(Node l _) <- parentNode b g
-  let node = (Node (l+1) b)
+  parent@(Node s _) <- parentNode b g
+  s' <- (S.safeTransactBlock s b)
+  let node = (Node s' b)
   return $ BlockGraph (updateMap node m) (updateHeads node parent hs)
 
-longestHead :: BlockGraph -> Block
-longestHead (BlockGraph m hs) = block $ maximum hs
+-- | Finds head with longest height
+-- | Criteria for draws is defined in Ord instance of Node
+-- | Which means heads are sorted by height and then alphabetically by block hash
+longestHead :: BlockGraph -> Node
+longestHead (BlockGraph m hs) = maximum hs
 
-longestChain :: BlockGraph -> [Block]
-longestChain g = chain (longestHead g) g
-
-state :: BlockGraph -> BC.State
-state = BC.calculateState . longestChain
+-- | Retrieves state of the longest chain
+longestChainState :: BlockGraph -> S.State
+longestChainState = state . longestHead
