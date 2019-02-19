@@ -28,6 +28,7 @@ instance Ord Node where
 
 data BlockGraph = BlockGraph { hashmap :: HashMap Hash Node,
                                heads :: [Node]}
+  deriving (Eq)
 
 -- | Find parent node of block or fail if not found
 parentNode :: Block -> BlockGraph -> Either Text Node
@@ -66,11 +67,18 @@ updateHeads new parent hs =
 -- | Include node in the hash map
 updateMap n@(Node _ (Block _ _ h)) m = HM.insert h n m
 
+initialized :: BlockGraph -> Either Text BlockGraph
+initialized g =
+  if g /= empty
+  then Right g
+  else Left "must initialize first"
+
 -- | Add node to graph
 -- | For a node to be added, it needs to be valid, not duplicated
 -- | And the transaction inputs must match unspent outputs
 addNode :: Block -> BlockGraph -> Either Text BlockGraph
 addNode b g@(BlockGraph m hs) = do
+  initialized g
   B.valid b
   notDuplicated b g
   parent@(Node s _) <- parentNode b g
