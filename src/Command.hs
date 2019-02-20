@@ -13,6 +13,7 @@ import qualified Models.BlockGraph as BG
 import Models.Block
 
 data QueryType = State | Heads
+  deriving (Show)
 instance ToJSON QueryType where
    toJSON State = "state"
    toJSON Heads = "heads"
@@ -23,6 +24,7 @@ instance FromJSON QueryType where
        "heads" -> return Heads
 
 data Command = Init Block | Submit Block | Query QueryType
+  deriving (Show)
 instance ToJSON Command where
   toJSON (Init block) = object ["init" .= block]
   toJSON (Submit block) = object ["block" .= block]
