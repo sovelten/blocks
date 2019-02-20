@@ -20,7 +20,8 @@ $ stack exec blocks-exe
 
 ## Runnning tests
 
-Some unit tests are written as documentation using haskell-doctest.
+Some unit tests are written as documentation using haskell-doctest. There is also one generative test for testing consistency of state update when adding a block.
+
 They can be run with:
 
 ```
